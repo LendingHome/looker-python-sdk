@@ -1,8 +1,3 @@
-token = "Mkz9GRYoIhyuJ898YG89Ig"
-secret = "v1+MNxMg1vdmljYbtBhEDFEQSlAUEZd4xWd"
-
-key = "Mkz9GRYoIhyuJ898YG89Ig&v1+MNxMg1vdmljYbtBhEDFEQSlAUEZd4xWd"
-
 # required libraries #
 import urllib2
 from hashlib import sha1
