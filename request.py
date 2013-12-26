@@ -5,6 +5,7 @@ import urllib2
 from hashlib import sha1
 import datetime as dt
 import random as rnd
+import requests
 
 class Request(object):
 
@@ -15,6 +16,7 @@ class Request(object):
 
 	def run(fields, filters = None, output = 'json', method = 'GET'):
 
+		host = 'https://demo.looker.com'
 		uri = '/api/dictionaries/' + dictionary + '/' + 'queries' + '/' + query + '.' + output
 		params = {}
 		params['fields'] = fields
@@ -27,7 +29,7 @@ class Request(object):
 		# create inputs for GET header # 
 		today = dt.datetime.now().strftime('%a, %d %b %Y %H:%M:%S -0800')
 		nonce = hex(rnd.getrandbits(128))[2:-1]
-		signature = generateStringToSign(method, uri.path, today, nonce, query_params)
+		stringToSign = generateStringToSign(method, location, today, nonce, query_params)
 
 		# create header #
 		header = {}
@@ -35,6 +37,8 @@ class Request(object):
 		header["Date"] = today
 		header["x-llooker-nonce"] = nonce
 		header["Authorization"] = token + ':' + signature
+
+		url = host + uri + '?' + query_params
 
 
 	# if parameters are fields
@@ -57,14 +61,15 @@ class Request(object):
 		return field_list + '&' + '&'.join(i for i in filter_list)			
 	
 
-	def generateStringToSign(method, location, today, nonce, params = {}):
+	def generateStringToSign(method, uri, today, nonce, query_params):
 		stringToSign = method + "\n"
-	    stringToSign += location + "\n"
+	    stringToSign += uri + "\n"
 	    stringToSign += today + "\n"
 	    stringToSign += nonce + "\n"
+	    stringToSign += query_params.replace('&', '\n')
+	    return stringToSign
 
-	    # insert part to split query_params on &
 
-    	hashed = hmac.new(secret, unicode(stringToSign, "utf-8"), sha1)
-    	signature =  binascii.b2a_base64(hashed.digest())[:-1]
+    hashed = hmac.new(secret, unicode(stringToSign, "utf-8"), sha1)
+    signature =  binascii.b2a_base64(hashed.digest())[:-1]
 
