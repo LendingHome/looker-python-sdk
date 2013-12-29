@@ -22,8 +22,8 @@ class Request(object):
 
 		# need token, secret, dictionary, and query to be passed into another 
 		# Looker.function and passed into Request.run as variables
-		token = "Mkz9GRYoIhyuJ898YG89Ig"
-		secret = "v1+MNxMg1vdmljYbtBhEDFEQSlAUEZd4xWd"
+		# token = "M________g"
+		# secret = "v__________d"
 		dictionary = 'thelook'
 		query = 'orders'
 
