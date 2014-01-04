@@ -70,7 +70,7 @@ class Request(object):
 			elif isinstance(m, type({})):
 				filter_list = []			
 				for k, v in m.items(): 
-					filter_list.append('filters[' + str(k).lower()  + ']=' + urllib.quote_plus(str(v).lower()))
+					filter_list.append('filters[' + str(k).lower()  + ']=' + urllib.quote_plus(str(v)))
 			else:
 				print "Your input is neither an array of fields nor a hash of filters."	
 		return field_list + '&' + '&'.join(i for i in filter_list)			
