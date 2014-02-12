@@ -14,13 +14,14 @@ Looker().setup(token = 'Mkz9GRYoIhyuJ898YG89Ig',
 myQuery = Request().query(query = 'orders', 
 					dictionary = 'thelook', 
 					fields = ['orders.count', 'users.count'], 
-					filters = {'users.created_date':'90 days'}
+					filters = {'users.state':'-%New%', 'orders.created_date':'90 days'}
 					)
 
 anotherQuery = Request().query(query = 'orders', 
 					dictionary = 'thelook', 
-					fields = ['orders.count'], 
+					fields = 'orders.count', 
 					filters = {'users.created_date':'90 days', 'orders.created_date':'90 days'}
 					)
 
-print myQuery, anotherQuery
+print myQuery
+print anotherQuery
