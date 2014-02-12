@@ -1,8 +1,6 @@
-#!/usr/bin/python
-
 # required libraries #
 from array import array
-import urllib2
+import urllib
 from hashlib import sha1
 import datetime as dt
 import random as rnd
@@ -10,25 +8,28 @@ import requests
 import base64
 import hmac
 import binascii
+import looker
 
 class Request(object):
 
 	# initialize the class using a constructor #
 	def __init__(self):
-		pass		
+		pass
 
-	# define run method, which contructs and makes the GET request #
-	def run(self, fields, filters = None, output = 'json', method = 'GET'):
+	# define query method, which contructs and makes the GET request #
+	def query(self, query, dictionary, fields, filters = None, output = 'json', method = 'GET'):
 
-		# need token, secret, dictionary, and query to be passed into another 
-		# Looker.function and passed into Request.run as variables
-		# token = "M________g"
-		# secret = "v__________d"
-		dictionary = 'thelook'
-		query = 'orders'
+		# from Looker().setup, get token, secret, and host #
+		token = looker.values['token']
+		secret = looker.values['secret']
+		host = looker.values['host']
 
-		# host should be passed into Request.run from Looker.setup 
-		host = 'https://demo.looker.com'
+		if isinstance(fields, str):
+		    fields = fields.split()
+		elif isinstance(fields, type({})):
+		    raise TypeError('Fields must be a list or a string')
+		else:
+		    pass		
 
 		uri = '/api/dictionaries/' + dictionary + '/' + 'queries' + '/' + query + '.' + output
 		params = {}
@@ -62,21 +63,23 @@ class Request(object):
 	# __buildQueryParams is a private function that puts fields and filters into 
 	# the proper format to make a Looker API call #
 	def __buildQueryParams(self, params):
+		filter_list = []
 		for m in params.itervalues():
 			if isinstance(m, type([])):
 				field_list = sorted([i.lower() for i in m])
-				field_list = ','.join(str(i) for i in field_list)	
+				field_list = ','.join(str(i) for i in field_list)
 				field_list = 'fields=' + field_list
 			elif isinstance(m, type({})):
-				filter_list = []			
 				for k, v in m.items(): 
 					filter_list.append('filters[' + str(k).lower()  + ']=' + urllib.quote_plus(str(v)))
 			else:
 				print "Your input is neither an array of fields nor a hash of filters."	
-		return field_list + '&' + '&'.join(i for i in filter_list)			
+		if filter_list != []:
+			return field_list + '&' + '&'.join(i for i in filter_list)
+		else:
+			return field_list
 	
 	#__generateStringToSign is a private function that #
 	def __generateStringToSign(self, method, uri, today, nonce, query_params):
 		stringToSign = method + "\n" + uri + "\n" + today + "\n" + nonce + "\n" + query_params.replace('&', "\n") + "\n"
 		return stringToSign
-
