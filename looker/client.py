@@ -6,6 +6,7 @@ import requests
 import base64
 import hmac
 import binascii
+import json
 
 
 class LookerClient(object):
@@ -22,16 +23,15 @@ class LookerClient(object):
 
 class Query(object):
 
-    filters = {}
-
-    # no support for method != GET
+    # only support for JSON and GET
     def __init__(self, credentials, query, dictionary, fields, filters=None, output='json', method='GET'):
         self.credentials = credentials
         self.query = query
         self.dictionary = dictionary
         self.fields = fields
-        self.output = output
+        self.set_output(output)
         self.method = method
+        self.filters = {}
         self.add_filters(filters)
 
     def run(self):
@@ -39,29 +39,30 @@ class Query(object):
             self.dictionary, self.query, self.output)
         url = "%s%s?%s" % (self.credentials.host, uri, self.__query_params())
         r = requests.get(url, headers=self.__headers(uri))
-        return r.text
+        return json.loads(r.text)
+
+    def set_output(self, output):
+        self.output = output
 
     def add_filters(self, filters):
-        if filters is not None:
+        if filters:
             self.filters.update(filters)
         return self
 
+    ## private methods ## 
+
     def __query_params(self):
-        fields_string = ",".join(
-            sorted([field.lower() for field in self.fields]))
+        fields_string = ",".join(sorted([field.lower() for field in self.fields]))
         filters_list = []
         for key, value in self.filters.iteritems():
-            filters_list.append("filters[%s]=%s" %
-                                (str(key).lower(), urllib.quote_plus(str(value))))
+            filters_list.append("filters[%s]=%s" % (str(key).lower(), urllib.quote_plus(str(value))))
         return "fields=%s&%s" % (fields_string, "&".join(filters_list))
 
     def __headers(self, uri):
         today = dt.datetime.now().strftime('%a, %d %b %Y %H:%M:%S -0800')
         nonce = hex(rnd.getrandbits(128))[2:-1]
         stringToSign = self.__generateStringToSign(uri, today, nonce)
-        hashed = hmac.new(self.credentials.secret,
-                          unicode(stringToSign, "utf-8"),
-                          sha1)
+        hashed = hmac.new(self.credentials.secret, unicode(stringToSign, "utf-8"), sha1)
         signature = binascii.b2a_base64(hashed.digest())[:-1]
         return {"Authorization": self.credentials.token + ':' + signature,
                 "Date": today,
