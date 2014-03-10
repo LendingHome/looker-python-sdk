@@ -15,12 +15,10 @@ You can install this package by cloning this directory and running:
 Getting Looker API keys
 -----------------------
 
-You need ...
-
-And you can get those things...
+Within your Looker, navigate to admin, manager users, then either create a new API user or get the token and secret associated with an existing API user.
 
 
-Using the Looker API
+Using the Looker Python SDK
 ---------------------
 
     from looker import LookerClient
