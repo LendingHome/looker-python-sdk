@@ -10,7 +10,7 @@ Setup
 
 You can install this package by cloning this directory and running:
 
-   $ python setup.py install
+   ```$ python setup.py install'''
 
 Getting Looker API keys
 -----------------------
