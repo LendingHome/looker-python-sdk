@@ -24,9 +24,9 @@ Using the Looker Python SDK
     from looker import LookerClient
 
     # instantiate LookerClient
-    client = LookerClient('Mkz9GRYoIhyuJ898YG89Ig',
-                          'v1+MNxMg1vdmljYbtBhEDFEQSlAUEZd4xWd',
-                          'https://demo.looker.com')
+    client = LookerClient('<token>',
+                          '<secret>',
+                          'https://<company_name>.looker.com')
 
     # create a query object
     query1 = client.query('orders',
