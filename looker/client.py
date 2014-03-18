@@ -7,6 +7,7 @@ import base64
 import hmac
 import binascii
 import json
+import email
 
 
 class LookerClient(object):
@@ -59,7 +60,7 @@ class Query(object):
         return "fields=%s&%s" % (fields_string, "&".join(filters_list))
 
     def __headers(self, uri):
-        today = dt.datetime.now().strftime('%a, %d %b %Y %H:%M:%S -0800')
+        today = email.Utils.formatdate(localtime=True)
         nonce = hex(rnd.getrandbits(128))[2:-1]
         stringToSign = self.__generateStringToSign(uri, today, nonce)
         hashed = hmac.new(self.credentials.secret, unicode(stringToSign, "utf-8"), sha1)
