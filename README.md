@@ -3,7 +3,7 @@ Looker SDK for Python
 
 A Python library for Lookers's HTTP-based APIs.
 
-- https://github.com/llooker/python_sdk
+- https://github.com/sdhoover/Python_SDK
 
 Setup
 -----
@@ -29,17 +29,17 @@ Using the Looker Python SDK
                           'https://<company_name>.looker.com')
 
     # create a query object
-    query1 = client.query('orders',
-                          'thelook',
-                          ['orders.count', 'users.count'],
+    query1 = client.query(dictionary = 'thelook',                               # this is the model
+                          query = 'orders',                                     # this is the base view
+                          fields = ['orders.count', 'users.count'],             # dimensions and measures
                           {'users.state': '-%New%',
-                           'orders.created_date': '90 days'})
+                           'orders.created_date': '90 days'})                   # filters as key-value pairs
 
     # create another query object
-    query2 = client.query('orders', 'thelook', 
+    query2 = client.query('thelook', 'orders', 
                           ['orders.count'],
                           {'users.created_date': '90 days'})
-    query2.add_filters({'orders.created_date': '90 days'})
+    query2.add_filters({'orders.created_date': '90 days'})                      # you can add filters post query build
 
     print query1.run()
     print query2.run()
