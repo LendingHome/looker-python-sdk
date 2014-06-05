@@ -9,7 +9,6 @@ import binascii
 import json
 import email
 
-
 class LookerClient(object):
 
     def __init__(self, token, secret, host, port=443):
@@ -50,14 +49,14 @@ class Query(object):
             self.filters.update(filters)
         return self
 
-    ## private methods ## 
+    ## private methods ##
 
     def __query_params(self):
         fields_string = ",".join(sorted([field.lower() for field in self.fields]))
         filters_list = []
         for key, value in self.filters.iteritems():
             filters_list.append("filters[%s]=%s" % (str(key).lower(), urllib.quote_plus(str(value))))
-        return "fields=%s&%s" % (fields_string, "&".join(filters_list))
+        return "fields=%s&%s" % (fields_string, "&".join(sorted(filters_list)))
 
     def __headers(self, uri):
         today = email.Utils.formatdate(localtime=True)
