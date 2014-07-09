@@ -24,11 +24,12 @@ class LookerClient(object):
 class Query(object):
 
     # only support for JSON and GET
-    def __init__(self, credentials, query, dictionary, fields, filters=None, output='json', method='GET'):
+    def __init__(self, credentials, query, dictionary, fields, filters=None, limit=1000, output='json', method='GET'):
         self.credentials = credentials
         self.query = query
         self.dictionary = dictionary
         self.fields = fields
+        self.limit = limit
         self.set_output(output)
         self.method = method
         self.filters = {}
@@ -56,7 +57,7 @@ class Query(object):
         filters_list = []
         for key, value in self.filters.iteritems():
             filters_list.append("filters[%s]=%s" % (str(key).lower(), urllib.quote_plus(str(value))))
-        return "fields=%s&%s" % (fields_string, "&".join(sorted(filters_list)))
+        return "fields=%s&%s&limit=%i" % (fields_string, "&".join(sorted(filters_list)), self.limit)
 
     def __headers(self, uri):
         today = email.Utils.formatdate(localtime=True)
