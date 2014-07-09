@@ -17,8 +17,8 @@ class LookerClient(object):
         self.host = host
         self.port = port
 
-    def query(self, query, dictionary, fields, filters=None, output='json', method='GET'):
-        return Query(self, query, dictionary, fields, filters=filters, output=output, method=method)
+    def query(self, query, dictionary, fields, filters=None, limit=1000, output='json', method='GET'):
+        return Query(self, query, dictionary, fields, filters=filters, limit=limit, output=output, method=method)
 
 
 class Query(object):
