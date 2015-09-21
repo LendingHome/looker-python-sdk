@@ -21,7 +21,7 @@ Within your Looker, navigate to admin, manager users, then either create a new A
 Using the Looker Python SDK
 ---------------------
 
-    from looker import LookerClient
+    from looker.client import LookerClient
 
     # instantiate LookerClient
     client = LookerClient('<token>',
