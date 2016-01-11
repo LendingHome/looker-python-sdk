@@ -17,14 +17,14 @@ class LookerClient(object):
         self.host = host
         self.port = port
 
-    def query(self, query, dictionary, fields, filters=None, limit=1000, output='json', method='GET'):
-        return Query(self, query, dictionary, fields, filters=filters, limit=limit, output=output, method=method)
+    def query(self, query, dictionary, fields, filters=None, sorts=None, sortdir=None, limit=1000, output='json', method='GET'):
+        return Query(self, query, dictionary, fields, filters=filters, sorts=sorts, sortdir=sortdir, limit=limit, output=output, method=method)
 
 
 class Query(object):
 
     # only support for JSON and GET
-    def __init__(self, credentials, query, dictionary, fields, filters=None, limit=1000, output='json', method='GET'):
+    def __init__(self, credentials, query, dictionary, fields, filters=None, sorts=None, sortdir=None, limit=1000, output='json', method='GET'):
         self.credentials = credentials
         self.query = query
         self.dictionary = dictionary
@@ -33,6 +33,8 @@ class Query(object):
         self.set_output(output)
         self.method = method
         self.filters = {}
+        self.sorts = sorts
+        self.sortdir = sortdir
         self.add_filters(filters)
 
     def run(self):
@@ -57,7 +59,8 @@ class Query(object):
         filters_list = []
         for key, value in self.filters.iteritems():
             filters_list.append("filters[%s]=%s" % (str(key).lower(), urllib.quote_plus(str(value))))
-        return "fields=%s&%s&limit=%i" % (fields_string, "&".join(sorted(filters_list)), self.limit)
+        sorts_string = '&sorts=%s%s' % (self.sorts, '+%s' % self.sortdir if self.sortdir else '')
+        return "fields=%s&%s&limit=%i%s" % (fields_string, "&".join(sorted(filters_list)), self.limit, sorts_string if sorts else '')
 
     def __headers(self, uri):
         today = email.Utils.formatdate(localtime=True)
@@ -77,5 +80,5 @@ class Query(object):
                   uri,
                   today,
                   nonce,
-                  self.__query_params().replace("&", "\n")]
+                  re.sub(r"&+", "\n", self.__query_params())]
         return "\n".join(fields) + "\n"
