@@ -8,6 +8,7 @@ import hmac
 import binascii
 import json
 import email
+import re
 
 class LookerClient(object):
 
