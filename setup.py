@@ -8,4 +8,5 @@ setup(name='looker_sdk',
       author_email='scott@looker.com',
       license='MIT',
       packages=['looker'],
+      install_requires=['requests'],
       zip_safe=False)
