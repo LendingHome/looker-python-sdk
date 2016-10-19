@@ -8,6 +8,7 @@ import hmac
 import binascii
 import json
 import email
+import re
 
 class LookerClient(object):
 
@@ -60,7 +61,7 @@ class Query(object):
         for key, value in self.filters.iteritems():
             filters_list.append("filters[%s]=%s" % (str(key).lower(), urllib.quote_plus(str(value))))
         sorts_string = '&sorts=%s%s' % (self.sorts, '+%s' % self.sortdir if self.sortdir else '')
-        return "fields=%s&%s&limit=%i%s" % (fields_string, "&".join(sorted(filters_list)), self.limit, sorts_string if sorts else '')
+        return "fields=%s&%s&limit=%i%s" % (fields_string, "&".join(sorted(filters_list)), self.limit, sorts_string if self.sorts else '')
 
     def __headers(self, uri):
         today = email.Utils.formatdate(localtime=True)
